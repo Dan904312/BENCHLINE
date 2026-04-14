@@ -1,183 +1,133 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+'use client';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 
-:root {
-  --lime: #C8FF00;
-  --lime-dim: #A8D800;
-  --bg: #080808;
-  --surface: #111111;
-  --surface-2: #1A1A1A;
-  --surface-3: #222222;
-  --border: #2A2A2A;
-  --text: #F2F2F2;
-  --text-muted: #777777;
-  --text-dim: #444444;
-  --red: #FF3B3B;
-  --orange: #FF7A00;
-  --blue: #3B82F6;
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    // TODO: replace with your real auth logic
+    setTimeout(() => {
+      if (email && password) {
+        router.push('/dashboard');
+      } else {
+        setError('Please enter your email and password.');
+        setLoading(false);
+      }
+    }, 800);
+  };
+
+  return (
+    <div className="min-h-screen bg-surface-200 flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-10"
+        >
+          <div className="inline-flex items-center gap-2 mb-2">
+            <Zap size={22} className="text-lime-400" />
+            <span className="font-display text-4xl text-white tracking-wide">BENCHLINE</span>
+          </div>
+          <p className="font-body text-sm text-white/30">Your outcome engine</p>
+        </motion.div>
+
+        {/* Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          onSubmit={handleLogin}
+          className="space-y-4"
+        >
+          <div>
+            <label className="block font-body text-xs text-white/40 uppercase tracking-widest mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full px-4 py-3 rounded-xl bg-surface-50 border border-white/10 text-white font-body text-sm placeholder-white/20 focus:outline-none focus:border-lime-400/50 transition-colors"
+              autoComplete="email"
+            />
+          </div>
+
+          <div>
+            <label className="block font-body text-xs text-white/40 uppercase tracking-widest mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPass ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 rounded-xl bg-surface-50 border border-white/10 text-white font-body text-sm placeholder-white/20 focus:outline-none focus:border-lime-400/50 transition-colors pr-12"
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(s => !s)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors"
+              >
+                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="font-body text-xs text-red-400 text-center"
+            >
+              {error}
+            </motion.p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 rounded-xl bg-lime-400 text-black font-body font-bold text-sm hover:bg-lime-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          >
+            {loading ? 'Signing in…' : 'Sign In'}
+          </button>
+        </motion.form>
+
+        {/* Footer links */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-6 text-center space-y-3"
+        >
+          <a href="/forgot-password" className="block font-body text-xs text-white/30 hover:text-white/60 transition-colors">
+            Forgot password?
+          </a>
+          <p className="font-body text-xs text-white/20">
+            No account?{' '}
+            <a href="/signup" className="text-lime-400 hover:text-lime-300 transition-colors font-semibold">
+              Sign up free
+            </a>
+          </p>
+        </motion.div>
+
+      </div>
+    </div>
+  );
 }
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
-
-/* Selection */
-::selection { background: var(--lime); color: #000; }
-
-/* Typography utilities */
-.font-display { font-family: var(--font-display); letter-spacing: 0.02em; }
-
-/* Lime glow effect */
-.glow-lime {
-  box-shadow: 0 0 20px rgba(200, 255, 0, 0.3), 0 0 60px rgba(200, 255, 0, 0.1);
-}
-
-/* Noise texture overlay */
-.noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* Card base */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #C8FF00 0%, #FFFFFF 60%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Shimmer loading */
-.shimmer {
-  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background: var(--surface-3);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: var(--lime);
-  border-radius: 2px;
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Lime button */
-.btn-lime {
-  background: var(--lime);
-  color: #000;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
-
-.btn-lime:hover {
-  background: var(--lime-dim);
-  transform: translateY(-1px);
-}
-
-.btn-lime:active { transform: translateY(0); }
-
-/* Ghost button */
-.btn-ghost {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-ghost:hover {
-  border-color: var(--text-muted);
-  background: var(--surface);
-}
-
-/* Streak badge */
-.streak-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, #FF7A00, #FF4444);
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
-}
-
-/* Severity colors */
-.severity-critical { color: var(--red); }
-.severity-moderate { color: var(--orange); }
-.severity-minor { color: var(--lime); }
-
-/* Animate in */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.delay-100 { animation-delay: 0.1s; opacity: 0; }
-.delay-200 { animation-delay: 0.2s; opacity: 0; }
-.delay-300 { animation-delay: 0.3s; opacity: 0; }
-.delay-400 { animation-delay: 0.4s; opacity: 0; }
-.delay-500 { animation-delay: 0.5s; opacity: 0; }
